@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SMS Control</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+<h2>Send SMS</h2>
+
+Phone number:<br>
+<input id="phone" type="text" placeholder="+849xxxxxxxx">
+<br><br>
+
+Message:<br>
+<input id="msg" type="text" placeholder="Hello">
+<br><br>
+
+<button onclick="sendSMS()">Send</button>
+
+<hr>
+
+<h3>LED Control</h3>
+
+<button onclick="sendCmd('ON')">ON</button>
+<button onclick="sendCmd('OFF')">OFF</button>
+
+<script>
+
+const ws = new WebSocket("ws://" + location.host);
+
+ws.onopen = () => {
+  console.log("Connected to server");
+};
+
+ws.onmessage = (event) => {
+  console.log("Server:", event.data);
+};
+
+function sendSMS() {
+
+  const phone = document.getElementById("phone").value;
+  const msg = document.getElementById("msg").value;
+
+  const data = JSON.stringify({
+    type: "sms",
+    phone: phone,
+    msg: msg
+  });
+
+  ws.send(data);
+
+}
+
+function sendCmd(cmd) {
+  ws.send(cmd);
+}
+
+</script>
+
+</body>
+</html>
